@@ -26,14 +26,6 @@ class UserController {
       id, name, email, supervisor
     });
   }
-
-  async update(req,res){
-
-    //console.log(req.userId); // userId adicionado dentro do request
-
-    return res.json({ ok: true });
-  }
-
 }
 
 export default new UserController();

@@ -3,6 +3,7 @@ import User from './app/models/User';
 
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionControler';
+import TeamController from './app/controllers/TeamController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -11,8 +12,9 @@ const routes = new Router();
 routes.post('/users', UserController.store); //Novos usuários
 routes.post('/sessions', SessionController.store); //Cria session para login
 
-routes.use(authMiddleware); // Responsaver por fazer a autenticação, só passa daqui se estiver logado
+routes.use(authMiddleware); // Responsavel por fazer a autenticação, só passa daqui se estiver logado
 
-routes.put('/users', UserController.update);
+routes.put('/team', TeamController.update);
+routes.get('/teamMembers', TeamController.index);
 
 export default routes;

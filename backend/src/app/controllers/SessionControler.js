@@ -17,13 +17,16 @@ class SessionControler {
       return res.status(401).json({ error: 'Invalid credentials please try again.' })
     }
 
-    const { id, name } = user;
+    const { id, name, supervisor, team_id } = user;
 
+    console.log(user.team_id)
     return res.json({
       user: {
         id,
         name,
         email,
+        supervisor,
+        team_id,
       },
       token: jwt.sign({ id }, authConfig.secret, {
         expiresIn: authConfig.expiresIn,

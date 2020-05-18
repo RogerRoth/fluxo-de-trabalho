@@ -29,11 +29,9 @@ module.exports = {
         allowNull: false,
       },
 
-      company_id: {
-        type: Sequelize.INTEGER,
-        references: { model: 'companies', key: 'id'},
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+      team_id: {
+        type: Sequelize.STRING,
+        defaultValue: null,
         allowNull: true,
       },
 
