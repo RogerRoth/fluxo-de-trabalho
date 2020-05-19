@@ -4,6 +4,7 @@ import User from './app/models/User';
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionControler';
 import TeamController from './app/controllers/TeamController';
+import TaskController from './app/controllers/TaskController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -16,5 +17,9 @@ routes.use(authMiddleware); // Responsavel por fazer a autenticação, só passa
 
 routes.put('/team', TeamController.update);
 routes.get('/teamMembers', TeamController.index);
+
+routes.post('/taskNew', TaskController.store);
+routes.put('/taskUpdate', TaskController.update);
+routes.get('/tasks', TaskController.index);
 
 export default routes;

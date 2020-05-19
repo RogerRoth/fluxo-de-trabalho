@@ -47,7 +47,7 @@ class TeamController {
 
   async index(req, res) {
 
-    const user = await User.findByPk(req.body.id);
+    const user = await User.findByPk(req.userId);
 
     if(user.supervisor == false) {
       return res.status(400).json({ error: 'You do not have enough privileges'});
@@ -55,7 +55,7 @@ class TeamController {
 
     const members = await User.findAll({
       where: {
-        team_id: req.body.id,
+        team_id: req.userId,
       },
       attributes: ['id', 'name', 'email'],
       order: ['name'],
