@@ -6,16 +6,18 @@ class TaskController {
 
     const user = await User.findOne({ where: { id: req.userId } });
 
+    const userName = await User.findOne({ where: { id: req.body.collaborator_id } });
+
     if(user.supervisor != true) {
       return res.status(400).json({ error: 'You do not have enough privileges.'});
     }
 
-    const { description, document_link, collaborator_name, collaborator_id, status } = req.body;
+    const { description, document_link, collaborator_id, status } = req.body;
 
     const { id } = await Task.create({
       description,
 	    document_link,
-      collaborator_name,
+      collaborator_name: userName.name,
       collaborator_id,
       supervisor: req.userId,
       status,
@@ -25,7 +27,7 @@ class TaskController {
       id,
       description,
 	    document_link,
-      collaborator_name,
+      collaborator_name: userName.name,
       collaborator_id,
       supervisor: req.userId,
       status,
@@ -61,7 +63,9 @@ class TaskController {
 
   async index(req, res) {
 
-    const { task_id, collaborator_id, status } = req.body;
+    const { task_id, collaborator_id, status } = req.query;
+
+    //req.userId
 
     let tasks = {};
 
@@ -71,6 +75,7 @@ class TaskController {
         where: {
           status: status,
           collaborator_id: collaborator_id,
+          supervisor: req.userId,
         },
         attributes: ['id', 'description', 'document_link', 'collaborator_name', 'collaborator_id', 'status'],
         order: ['id'],
@@ -82,16 +87,28 @@ class TaskController {
       tasks = await Task.findOne({
         where: {
           id: task_id,
+          supervisor: req.userId,
         },
         attributes: ['id', 'description', 'document_link', 'collaborator_name', 'collaborator_id', 'status'],
         order: ['id'],
       });
 
-    }else if(collaborator_id != ""){
+    }else if(collaborator_id == req.userId){
 
       tasks = await Task.findAll({
         where: {
           collaborator_id: collaborator_id,
+        },
+        attributes: ['id', 'description', 'document_link', 'collaborator_name', 'collaborator_id', 'status'],
+        order: ['id'],
+      });
+
+    }else if(collaborator_id != "" && collaborator_id != req.userId){
+
+      tasks = await Task.findAll({
+        where: {
+          collaborator_id: collaborator_id,
+          supervisor: req.userId,
         },
         attributes: ['id', 'description', 'document_link', 'collaborator_name', 'collaborator_id', 'status'],
         order: ['id'],
@@ -102,6 +119,7 @@ class TaskController {
       tasks = await Task.findAll({
         where: {
           status: status,
+          supervisor: req.userId,
         },
         attributes: ['id', 'description', 'document_link', 'collaborator_name', 'collaborator_id', 'status'],
         order: ['id'],

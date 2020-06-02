@@ -11,6 +11,10 @@ class TeamController {
       return res.status(400).json({ error: 'User does not exist.'});
     }
 
+    if(!userExists.team_id != null && add == true) {
+      return res.status(400).json({ error: 'User is already part of a team.'});
+    }
+
     if(!supervisorExists) {
       return res.status(400).json({ error: 'Supervisor does not exist.'});
     }
