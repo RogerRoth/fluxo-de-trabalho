@@ -1,4 +1,5 @@
 import User from '../models/User';
+import Task from '../models/Task';
 
 class TeamController {
   async update(req, res) {
@@ -11,7 +12,7 @@ class TeamController {
       return res.status(400).json({ error: 'User does not exist.'});
     }
 
-    if(!userExists.team_id != null && add == true) {
+    if(userExists.team_id != null && add == true) {
       return res.status(400).json({ error: 'User is already part of a team.'});
     }
 
@@ -37,13 +38,20 @@ class TeamController {
       return res.status(200).json({
         id, name, email
       });
-    }else{
+    }else{ //Remove user from team
+
+      const userTasks = await Task.findAll({ where: { collaborator_id: user_id } });
+
+      if(userTasks.length > 0){
+        await Task.update({ collaborator_name: '', collaborator_id: '', status: 'Pendente' },{ where: { collaborator_id: user_id } })
+      }
+
       const { id } = await user.update(
         { team_id: null }
       );
 
       return res.status(200).json({
-        id
+        id,
       });
     }
 
