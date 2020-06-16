@@ -21,5 +21,6 @@ routes.get('/teamMembers', TeamController.index);
 routes.post('/taskNew', TaskController.store);
 routes.put('/taskUpdate', TaskController.update);
 routes.get('/tasks', TaskController.index);
+routes.delete('/tasks/:task_id', TaskController.delete);
 
 export default routes;

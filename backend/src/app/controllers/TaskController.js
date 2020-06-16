@@ -39,10 +39,6 @@ class TaskController {
 
     const user = await User.findOne({ where: { id: req.userId } });
 
-    if(user.supervisor != true) {
-      return res.status(400).json({ error: 'You do not have enough privileges.'});
-    }
-
     const userCheck = await User.findByPk(req.body.collaborator_id );
 
     const task = await Task.findOne({ where: { id: req.body.id } });
@@ -65,8 +61,6 @@ class TaskController {
 
     const { task_id, collaborator_id, status } = req.query;
 
-    //req.userId
-
     let tasks = {};
 
     if(status != "" && collaborator_id != ""){
@@ -81,7 +75,16 @@ class TaskController {
         order: ['id'],
       });
 
-      
+    }else if(task_id != "" && collaborator_id == req.userId){
+
+      tasks = await Task.findOne({
+        where: {
+          id: task_id,
+        },
+        attributes: ['id', 'description', 'document_link', 'collaborator_name', 'collaborator_id', 'status'],
+        order: ['id'],
+      });
+
     }else if(task_id != ""){
 
       tasks = await Task.findOne({
@@ -125,10 +128,36 @@ class TaskController {
         order: ['id'],
       });
 
+    }else if(collaborator_id != req.userId){
+
+      tasks = await Task.findAll({
+        where: {
+          supervisor: req.userId,
+        },
+        attributes: ['id', 'description', 'document_link', 'collaborator_name', 'collaborator_id', 'status'],
+        order: ['id'],
+      });
+
     }
 
     return res.json(tasks);
 
+  }
+
+  async delete(req, res) {
+    
+    const { task_id } = req.params;
+
+    const user = await User.findOne({ where: { id: req.userId } });
+
+    if(user.supervisor != true) {
+      return res.status(400).json({ error: 'You do not have enough privileges.'});
+    }
+
+    await Task.destroy({ where: { id: task_id } });
+
+    return res.status(204).send();
+    
   }
 }
 
